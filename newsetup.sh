@@ -3,6 +3,9 @@
 # Exit on first error
 set -e
 
+# Get the directory of the script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # Update system
 sudo pacman -Syu --noconfirm
 
@@ -19,8 +22,9 @@ sudo pacman -S --noconfirm \
     man npm nodejs glfw swappy grim slurp wf-recorder \
     htop luarocks
 
-# Change shell to ZSH
-chsh -s $(which zsh)
+# Recommendation to change shell manually
+echo "To change your shell to ZSH, run: chsh -s $(which zsh)"
+echo "You will need to enter your password when prompted."
 
 # Clean up existing configurations
 rm -rf ~/.config/nvim
@@ -53,14 +57,19 @@ cp -r ./yazi/ ~/.config/
 mkdir -p ~/.config/zsh
 cd ~/.config/zsh
 
+# Remove existing directories if they exist
+rm -rf powerlevel10k
+rm -rf zsh-syntax-highlighting
+rm -rf zsh-autosuggestions
+
 # Clone ZSH plugins
 git clone https://github.com/romkatv/powerlevel10k.git
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 git clone https://github.com/zsh-users/zsh-autosuggestions.git
 
-# Copy configuration files 
-cp /path/to/source/.vimrc ~/.vimrc
-cp /path/to/source/.zshrc ~/.zshrc
+# Copy configuration files from the script's directory
+cp "$SCRIPT_DIR/.vimrc" ~/.vimrc
+cp "$SCRIPT_DIR/.zshrc" ~/.zshrc
 
 # Configure Fastfetch (non-interactive)
 mkdir -p ~/.config/fastfetch
@@ -68,3 +77,5 @@ fastfetch --gen-config-file ~/.config/fastfetch/config.jsonc
 
 # Open Neovim for final configuration
 nvim ~/.p10k.zsh
+
+echo "Setup complete. Remember to change your shell to ZSH manually."
