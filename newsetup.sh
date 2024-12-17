@@ -6,8 +6,32 @@ set -e
 # Get the directory of the script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Set local RTC
+timedatectl set-local-rtc 1 --adjust-system-clock
+
+# Install Ly display manager
+sudo pacman -S --noconfirm ly
+sudo systemctl enable ly.service
+
 # Update system
 sudo pacman -Syu --noconfirm
+
+# Install theme-related packages
+sudo pacman -S --noconfirm nwg-look
+
+# Install Yay if not already installed
+if ! command -v yay &> /dev/null; then
+    cd ~
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si --noconfirm
+    cd ~
+fi
+
+# Install Rose Pine themes
+yay -S --noconfirm rose-pine-hyprcursor
+yay -S --noconfirm rose-pine-cursor
+yay -S --noconfirm rose-pine-gtk-theme
 
 # Bluetooth section (corrected)
 sudo pacman -S --noconfirm bluez bluez-utils pulseaudio blueman pulseaudio-bluetooth xdg-utils
@@ -70,12 +94,5 @@ git clone https://github.com/zsh-users/zsh-autosuggestions.git
 # Copy configuration files from the script's directory
 cp "$SCRIPT_DIR/.vimrc" ~/.vimrc
 cp "$SCRIPT_DIR/.zshrc" ~/.zshrc
-
-# Configure Fastfetch (non-interactive)
-mkdir -p ~/.config/fastfetch
-fastfetch --gen-config-file ~/.config/fastfetch/config.jsonc
-
-# Open Neovim for final configuration
-nvim ~/.p10k.zsh
 
 echo "Setup complete. Remember to change your shell to ZSH manually."
